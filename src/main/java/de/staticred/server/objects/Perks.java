@@ -1,0 +1,5 @@
+package de.staticred.server.objects;
+
+public enum Perks {
+    FLY_PERK, KEEP_INVENTORY_PERK, KEEP_XP_PERK, ANTI_HUNGER, SPEED_PERK, FAST_DESTROY_PERK, NIGHT_VISION_PERK, DOUBLE_XP_PERK
+}

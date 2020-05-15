@@ -1,0 +1,25 @@
+name: StaticsServerEnhancment
+version: 1.0.0
+author: StaticRed
+main: de.staticred.server.Main
+api-version: 1.15
+
+commands:
+  perks:
+    description: opens the perk inventory
+  vote:
+    description:
+  v:
+    description:
+  premium:
+    description:
+  head:
+    description:
+  debug:
+    description:
+  showborder:
+    description:
+  openshop:
+    description:
+  spec:
+    description:

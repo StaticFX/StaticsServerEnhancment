@@ -1,0 +1,4 @@
+SQL_USER: "root"
+SQL_PASSWORD: ""
+SQL_DATABASE: "staff"
+SQL_HOST: "staff"
