@@ -19,7 +19,7 @@ public class EventManager {
         Inventory inv = Bukkit.createInventory(null,3*9, "§e§lEvents");
         ItemStack doublexp = itemBuilder("§b§lDoppelte XP",Material.EXPERIENCE_BOTTLE, Arrays.asList("§7 - §eAktiviert doppelte XP für alle", "§7 - §eHält 15 Minuten"));
         ItemStack fastdestroy = itemBuilder("§b§lSchneller abbauen",Material.DIAMOND_PICKAXE, Arrays.asList("§7 - §eAktiviert HASTE 2 für alle", "§7 - §eHält 15 Minuten"));
-        ItemStack mobdroprate = itemBuilder("§b§lEhöhte Mobdroprate",Material.CREEPER_HEAD, Arrays.asList("§7 - §eAktiviert eine erhöte Dropchance XP für alle", "§7 - §eHält 5 Minuten"));
+        ItemStack mobdroprate = itemBuilder("§b§lEhöhte Mobdroprate",Material.CREEPER_HEAD, Arrays.asList("§7 - §eAktiviert eine erhöte Dropchance für alle", "§7 - §eHält 5 Minuten"));
         ItemStack fly_event = itemBuilder("§b§lServer Fly",Material.FEATHER, Arrays.asList("§7 - §eAktiviert das Fliegen für alle", "§7 - §eHält 15 Minuten"));
         ItemStack half_damage = itemBuilder("§b§lHalber Schaden",Material.APPLE, Arrays.asList("§7 - §eAktiviert halben Schaden für alle (gesamter Server)", "§7 - §eHält 5 Minuten"));
         ItemStack shop_sale = itemBuilder("§b§lShop Sale",Material.GOLDEN_APPLE, Arrays.asList("§7 - §eAktiviert 10% Sale im shop", "§7 - §eHält 10 Minuten"));

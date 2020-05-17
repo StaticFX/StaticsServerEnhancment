@@ -39,6 +39,10 @@
       <id>enginehub</id>
       <url>https://maven.enginehub.org/repo/</url>
     </repository>
+    <repository>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>

@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.staticred.server.commands.*;
 import de.staticred.server.db.DataBaseConnection;
+import de.staticred.server.db.EventDAO;
 import de.staticred.server.db.PerkDAO;
 import de.staticred.server.eventblocker.*;
 import de.staticred.server.filemanagment.ConfigFileManagment;
@@ -134,6 +135,12 @@ public class Main extends JavaPlugin {
         getCommand("showborder").setExecutor(new ShowBorderCommandExecutor());
         getCommand("openshop").setExecutor(new ShopCommandExecutor());
         getCommand("spec").setExecutor(new SpecCommandExecutor());
+        getCommand("event").setExecutor(new EventCommandExecutor());
+        try {
+            EventDAO.getInstance().loadTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel( this, "BungeeCord", new PluginChannelListener()); // we register the incoming channel

@@ -23,8 +23,13 @@ public class LoginEvent implements Listener {
         Player p = e.getPlayer();
         if(!Main.enabledPerks.containsKey(p)) Main.enabledPerks.put(p,new ArrayList<>());
 
-
-        Scoreboard.generateScoreboard(p);
+        try {
+            if(!EventDAO.getInstance().isInDatabase(p.getUniqueId()))
+                EventDAO.getInstance().addPlayer(p.getUniqueId(), 0);
+            Scoreboard.generateScoreboard(p);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
 
         e.setJoinMessage("");
 
