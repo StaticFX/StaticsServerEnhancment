@@ -1,34 +1,42 @@
 package de.staticred.server.eventblocker;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
 import de.staticred.server.Main;
 import de.staticred.server.objects.Event;
 import de.staticred.server.objects.EventType;
 import de.staticred.server.util.EventManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Arrays;
+public class EventInventoryListener implements Listener {
 
-public class PluginMessager implements PluginMessageListener {
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e) {
 
-    @Override
-    public void onPluginMessageReceived(String channel, Player p, byte[] bytes) {
+        Player p = (Player) e.getWhoClicked();
+        String title = p.getOpenInventory().getTitle();
 
-        if(!channel.equals("c:bungeecord")) return;
+        if(title.equalsIgnoreCase("§e§lEvents")) {
+            e.setCancelled(true);
 
-        ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
+            ItemStack clickedItem = e.getCurrentItem();
 
-        String subchannel = in.readUTF();
+            if(clickedItem == null) return;
+            if(clickedItem.getItemMeta() == null) return;
 
-        if(subchannel.equalsIgnoreCase("event")) {
-            EventType eventType = EventType.valueOf(in.readUTF());
+            String itemName = clickedItem.getItemMeta().getDisplayName();
 
-            if(eventType == EventType.DOUBLE_XP) {
+            if(Main.currentEvent != null) {
+                p.sendMessage("§cEs ist schon ein Event im moment!");
+                return;
+            }
+
+            if(itemName.equals("§b§lDoppelte XP")) {
                 de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.DOUBLE_XP);
                 EventManager.sendMessageToBungee(event);
                 Bukkit.broadcastMessage("&8-----------------");
@@ -42,7 +50,7 @@ public class PluginMessager implements PluginMessageListener {
                 return;
             }
 
-            if(eventType == EventType.FAST_DESTROY) {
+            if(itemName.equals("§b§lSchneller abbauen")) {
                 de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.FAST_DESTROY);
                 EventManager.sendMessageToBungee(event);
                 Bukkit.broadcastMessage("&8-----------------");
@@ -63,7 +71,7 @@ public class PluginMessager implements PluginMessageListener {
                 return;
             }
 
-            if(eventType == EventType.MOB_DROPRATE) {
+            if(itemName.equals("§b§lEhöhte Mobdroprate")) {
                 de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.MOB_DROPRATE);
                 EventManager.sendMessageToBungee(event);
                 Bukkit.broadcastMessage("&8-----------------");
@@ -77,7 +85,7 @@ public class PluginMessager implements PluginMessageListener {
                 return;
             }
 
-            if(eventType == EventType.FLY_EVENT) {
+            if(itemName.equals("§b§lServer Fly")) {
                 de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.FLY_EVENT);
                 EventManager.sendMessageToBungee(event);
                 Bukkit.broadcastMessage("&8-----------------");
@@ -90,12 +98,13 @@ public class PluginMessager implements PluginMessageListener {
                 for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                     onlinePlayer.setFlying(true);
                     onlinePlayer.setAllowFlight(true);
+                    Main.currentEvent = event;
                 }
-                Main.currentEvent = event;
-                return;
+
+                    return;
             }
 
-            if(eventType == EventType.HALF_DAMAGE_EVENT) {
+            if(itemName.equals("§b§lHalber Schaden")) {
                 de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.FLY_EVENT);
                 EventManager.sendMessageToBungee(event);
                 Bukkit.broadcastMessage("&8-----------------");
@@ -109,9 +118,8 @@ public class PluginMessager implements PluginMessageListener {
                 return;
             }
 
-
-            if(eventType == EventType.SHOP_SALE) {
-                de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.SHOP_SALE);
+            if(itemName.equals("§b§lShop Sale")) {
+                de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.FLY_EVENT);
                 EventManager.sendMessageToBungee(event);
                 Bukkit.broadcastMessage("&8-----------------");
                 Bukkit.broadcastMessage("§e§lEin Event wurde aktiviert!");
@@ -125,20 +133,17 @@ public class PluginMessager implements PluginMessageListener {
                 return;
             }
 
+            if(itemName.startsWith("§aDeine Tickets:")) {
+                p.sendMessage("§aTicktes bekommst du unter: §6ziemlich.tebex.io");
+            }
+
+
 
         }
 
-        if(subchannel.equalsIgnoreCase("debug")) {
-            String command = in.readUTF();
 
-            Main.resultMessage.add(command);
 
-        }
-
-        if(subchannel.equalsIgnoreCase("ban") || subchannel.equalsIgnoreCase("mute")) {
-            String message = in.readUTF();
-            if(message.equalsIgnoreCase("executed")) Main.confirmed = true;
-        }
 
     }
+
 }

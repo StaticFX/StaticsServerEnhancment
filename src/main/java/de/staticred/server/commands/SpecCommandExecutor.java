@@ -1,5 +1,7 @@
 package de.staticred.server.commands;
 
+import de.staticred.server.Main;
+import de.staticred.server.objects.Perks;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,11 +32,11 @@ public class SpecCommandExecutor implements CommandExecutor {
         if(p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.CREATIVE) {
             p.setGameMode(GameMode.SPECTATOR);
             p.sendMessage("§aSpec mode activated.");
+            Main.getInstance().executePerkChange(p, Perks.FLY_PERK,true);
         }else{
             p.setGameMode(GameMode.SURVIVAL);
             p.sendMessage("§cSpec mode deactivated.");
         }
-
 
         return false;
     }

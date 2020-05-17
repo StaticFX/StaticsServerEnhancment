@@ -23,3 +23,5 @@ commands:
     description:
   spec:
     description:
+  event:
+    description:

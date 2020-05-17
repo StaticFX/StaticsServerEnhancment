@@ -1,7 +1,9 @@
 package de.staticred.server.eventblocker;
 
 import de.staticred.server.Main;
+import de.staticred.server.db.EventDAO;
 import de.staticred.server.db.PerkDAO;
+import de.staticred.server.objects.EventType;
 import de.staticred.server.objects.Perks;
 import de.staticred.server.scoreboard.Scoreboard;
 import org.bukkit.entity.Player;
@@ -31,8 +33,25 @@ public class LoginEvent implements Listener {
             Main.updater = true;
         }
 
+        if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.FLY_EVENT) {
+            p.setFlying(true);
+            p.setAllowFlight(true);
+        }
+        if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.FAST_DESTROY) {
+            if(p.hasPermission("perk.fastdestroy")) {
+                p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING,99999,5,true,false));
+            }else{
+                p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING,99999,2,true,false));
+            }
+        }
 
-        try {
+
+
+            try {
+                 if(!EventDAO.getInstance().isInDatabase(p.getUniqueId())) {
+                     EventDAO.getInstance().addPlayer(p.getUniqueId(),0);
+                 }
+
                 if(p.hasPermission("perk.fly")) {
                     PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.FLY_PERK);
                 }else{

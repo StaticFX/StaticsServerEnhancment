@@ -20,7 +20,6 @@ public class PluginChannelListener implements PluginMessageListener {
         if(subchannel.equalsIgnoreCase("PlayerCount")) {
             String server = in.readUTF();
             Main.onlineplayer = in.readInt();
-
         }
     }
 

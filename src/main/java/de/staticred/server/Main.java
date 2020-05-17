@@ -7,6 +7,7 @@ import de.staticred.server.db.DataBaseConnection;
 import de.staticred.server.db.PerkDAO;
 import de.staticred.server.eventblocker.*;
 import de.staticred.server.filemanagment.ConfigFileManagment;
+import de.staticred.server.objects.Event;
 import de.staticred.server.objects.Perks;
 import de.staticred.server.objects.Shop;
 import de.staticred.server.objects.ShopItem;
@@ -52,6 +53,8 @@ public class Main extends JavaPlugin {
     public static HashMap<Player, Integer> playerTaskHashMap = new HashMap<>();
     public static int onlineplayer;
     public static int onlineplayer2;
+    public static Event currentEvent = null;
+    public static double shopMultiplier = 1;
 
 
     @Override
@@ -61,7 +64,7 @@ public class Main extends JavaPlugin {
                 for(Perks perk : PerkDAO.getInstance().getPerks(p.getUniqueId())) {
                     executePerkChange(p,perk,false);
                 }
-
+                p.closeInventory();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -116,6 +119,8 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FireBurnEvent(),this);
         getServer().getPluginManager().registerEvents(new CommandListener(),this);
         getServer().getPluginManager().registerEvents(new PlayerPortalEvent(),this);
+        getServer().getPluginManager().registerEvents(new EventInventoryListener(),this);
+        getServer().getPluginManager().registerEvents(new DamageEvent(),this);
 
         getServer().getMessenger().registerIncomingPluginChannel( this, "c:bungeecord", new PluginMessager()); // we register the incoming channel
         getServer().getMessenger().registerOutgoingPluginChannel( this, "c:bungeecord");
@@ -162,12 +167,20 @@ public class Main extends JavaPlugin {
 
     public void executePerkChange(Player p, Perks perk, boolean activation) {
         if(perk == Perks.FLY_PERK) {
-            if(activation) p.setAllowFlight(true);
-            if(!activation) p.setAllowFlight(false);
+            if(p.hasPermission("perk.fly")) {
+                if(activation) p.setAllowFlight(true);
+                if(!activation) p.setAllowFlight(false);
+            }
         }
         if(perk == Perks.FAST_DESTROY_PERK) {
-            if(activation) p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 999999, 2,true,false));
-            if(!activation) p.removePotionEffect(PotionEffectType.FAST_DIGGING);
+            if(p.hasPermission("perk.fastdestroy")) {
+                if(activation) p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 999999, 2,true,false));
+                if(!activation) p.removePotionEffect(PotionEffectType.FAST_DIGGING);
+            }else{
+                p.removePotionEffect(PotionEffectType.FAST_DIGGING);
+            }
+
+
         }
         if(perk == Perks.SPEED_PERK) {
             if(activation) p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 999999, 1,true,false));
@@ -432,5 +445,7 @@ public class Main extends JavaPlugin {
 
         return shop;
     }
+
+
 
 }

@@ -1,5 +1,6 @@
 package de.staticred.server.objects;
 
+import de.staticred.server.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +21,7 @@ public class ShopItem {
     {
         this.name = name;
 
-        this.buyPrice = Integer.parseInt(Long.toString(Math.round(buyPrice * 1.5)));
+        this.buyPrice = Integer.parseInt(Long.toString(Math.round(buyPrice * 1.5 * Main.shopMultiplier)));
         this.sellPrice = 0;
         this.amount = amount;
         this.mat = mat;

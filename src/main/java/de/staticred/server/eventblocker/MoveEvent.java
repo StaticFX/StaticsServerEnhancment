@@ -3,6 +3,7 @@ package de.staticred.server.eventblocker;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import de.staticred.server.Main;
+import de.staticred.server.objects.EventType;
 import de.staticred.server.objects.Perks;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,6 +16,9 @@ public class MoveEvent implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
+
+        if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.FLY_EVENT) return;
+
 
 
         if(!p.hasPermission("perk.flyanywhere")) {
