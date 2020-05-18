@@ -1,5 +1,6 @@
 package de.staticred.server.eventblocker;
 
+import de.staticred.server.db.EventDAO;
 import de.staticred.server.db.PerkDAO;
 import de.staticred.server.objects.Perks;
 import org.bukkit.entity.Player;
@@ -27,6 +28,11 @@ public class PlayerQuitEvent implements Listener {
             ex.printStackTrace();
         }
 
+        try {
+            EventDAO.getInstance().setLastOnline(p.getUniqueId());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
     }
 

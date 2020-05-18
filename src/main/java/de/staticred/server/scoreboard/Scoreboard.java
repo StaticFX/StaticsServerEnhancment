@@ -93,6 +93,21 @@ public class Scoreboard {
         playerTeam.addEntry("§7");
         objective.getScore("§7").setScore(10);
 
+        objective.getScore("       ").setScore(9);
+        objective.getScore("        ").setScore(8);
+        objective.getScore("§e§lAktuelles Event:").setScore(8);
+
+        Team evenTeam = board.registerNewTeam("eventTeam");
+
+        if(Main.currentEvent == null) {
+            evenTeam.setPrefix("§7»§a Kein Event");
+        }else{
+            evenTeam.setPrefix("§7»§a " + Main.currentEvent.getEventType().toString());
+        }
+
+        evenTeam.addEntry("§8");
+        objective.getScore("§8").setScore(7);
+
         p.setScoreboard(board);
 
     }
@@ -165,6 +180,24 @@ public class Scoreboard {
                 }else{
                     playerTeam.setPrefix("§7»§a " + Main.onlineplayer);
                 }
+
+                Team eventTeam = board.getTeam("eventTeam");
+
+
+                sendFarmData(p);
+
+                if(eventTeam == null) {
+                    eventTeam = board.registerNewTeam("playerTeam");
+                    if(Main.currentEvent == null) {
+                        eventTeam.setPrefix("§7»§a Kein Event");
+                    }else{
+                        eventTeam.setPrefix("§7»§a " + Main.currentEvent.getEventType().toString());
+                    }                    eventTeam.addEntry("§8");
+                    obj.getScore("§8").setScore(7);
+                }else{
+                    eventTeam.setPrefix("§7»§a " + Main.currentEvent.getEventType().toString());
+                }
+
             }
         }, 0, 200);
     }

@@ -15,6 +15,9 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
 
 public class LoginEvent implements Listener {
 
@@ -31,12 +34,27 @@ public class LoginEvent implements Listener {
             ex.printStackTrace();
         }
 
+        String group = Main.api.getUserManager().getUser(p.getUniqueId()).getPrimaryGroup();
+
+        if(group.equalsIgnoreCase("ziemlich")) {
+            try {
+                if(isNewDay(p.getUniqueId())) {
+                    EventDAO.getInstance().setTickedAmount(p.getUniqueId(),EventDAO.getInstance().getTickedAmount(p.getUniqueId()) + 1);
+                    p.sendMessage("§cDir wurde Automatisch dein tägliches Event-Ticket zugewiesen.");
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
         e.setJoinMessage("");
 
         if(!Main.updater) {
             Scoreboard.startUpdater();
             Main.updater = true;
         }
+
+
 
         if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.FLY_EVENT) {
             p.setFlying(true);
@@ -129,6 +147,23 @@ public class LoginEvent implements Listener {
             if(activation) p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 999999, 1,true,false));
             if(!activation) p.removePotionEffect(PotionEffectType.NIGHT_VISION);
         }
+    }
+
+    public boolean isNewDay(UUID player) throws SQLException {
+        if(EventDAO.getInstance().isPlayerInDatabse(player)) {
+
+            Date date = new Date(EventDAO.getInstance().lastSeen(player));
+
+            Calendar calender = Calendar.getInstance();
+            Calendar calender1 = Calendar.getInstance();
+            calender.setTime(date);
+            calender1.setTime(new Date(System.currentTimeMillis()));
+
+
+            return calender.get(Calendar.DAY_OF_YEAR) == calender1.get(Calendar.DAY_OF_YEAR) &&
+                    calender.get(Calendar.YEAR) == calender1.get(Calendar.YEAR);
+        }
+        return false;
     }
 
 }

@@ -136,6 +136,8 @@ public class Main extends JavaPlugin {
         getCommand("openshop").setExecutor(new ShopCommandExecutor());
         getCommand("spec").setExecutor(new SpecCommandExecutor());
         getCommand("event").setExecutor(new EventCommandExecutor());
+        getCommand("tickets").setExecutor(new TicketCommandExecutor());
+
         try {
             EventDAO.getInstance().loadTable();
         } catch (SQLException e) {
@@ -145,8 +147,18 @@ public class Main extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel( this, "BungeeCord", new PluginChannelListener()); // we register the incoming channel
 
+
+
         loadPerms();
         for(Player p : Bukkit.getOnlinePlayers()) {
+
+            for(PotionEffect effect : p.getActivePotionEffects()) {
+                p.removePotionEffect(effect.getType());
+            }
+
+            p.setFlying(false);
+            p.setAllowFlight(false);
+
             if(!enabledPerks.containsKey(p)) enabledPerks.put(p,new ArrayList<>());
             try {
                 for(Perks perk : PerkDAO.getInstance().getPerks(p.getUniqueId())) {

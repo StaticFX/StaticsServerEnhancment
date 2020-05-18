@@ -5,6 +5,7 @@ import de.staticred.server.objects.Event;
 import de.staticred.server.objects.Perks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -52,27 +53,33 @@ public class EventManager {
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(),() -> {
             Bukkit.broadcastMessage("§8------------");
             Bukkit.broadcastMessage("§c§lDas aktuelle Event endet in §420 §c§lsekunden.");
+            sendAllPlayersSound(Sound.BLOCK_NOTE_BLOCK_PLING);
             Bukkit.broadcastMessage("§8------------");
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
                 Bukkit.broadcastMessage("§8------------");
                 Bukkit.broadcastMessage("§c§lDas aktuelle Event endet in §45 §c§lsekunden.");
+                sendAllPlayersSound(Sound.BLOCK_NOTE_BLOCK_PLING);
                 Bukkit.broadcastMessage("§8------------");
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
                     Bukkit.broadcastMessage("§8------------");
                     Bukkit.broadcastMessage("§c§lDas aktuelle Event endet in §44 §c§lsekunden.");
                     Bukkit.broadcastMessage("§8------------");
+                    sendAllPlayersSound(Sound.BLOCK_NOTE_BLOCK_PLING);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
                         Bukkit.broadcastMessage("§8------------");
                         Bukkit.broadcastMessage("§c§lDas aktuelle Event endet in §43 §c§lsekunden.");
                         Bukkit.broadcastMessage("§8------------");
+                        sendAllPlayersSound(Sound.BLOCK_NOTE_BLOCK_PLING);
                         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
                             Bukkit.broadcastMessage("§8------------");
                             Bukkit.broadcastMessage("§c§lDas aktuelle Event endet in §42 §c§lsekunden.");
                             Bukkit.broadcastMessage("§8------------");
+                            sendAllPlayersSound(Sound.BLOCK_NOTE_BLOCK_PLING);
                             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
                                 Bukkit.broadcastMessage("§8------------");
                                 Bukkit.broadcastMessage("§c§lDas aktuelle Event endet in §41 §c§lsekunden.");
                                 Bukkit.broadcastMessage("§8------------");
+                                sendAllPlayersSound(Sound.BLOCK_NOTE_BLOCK_PLING);
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
                                     Main.currentEvent = null;
                                     Bukkit.broadcastMessage("§8------------");
@@ -85,6 +92,7 @@ public class EventManager {
                                         Main.getInstance().executePerkChange(onlineplayer, Perks.FLY_PERK,true);
                                     }
                                     Main.shopMultiplier = 1;
+                                    sendAllPlayersSound(Sound.BLOCK_NOTE_BLOCK_PLING);
                                 }, 20);
                             }, 20);
                         }, 20);
@@ -96,6 +104,12 @@ public class EventManager {
 
     public static void sendMessageToBungee(Event event) {
         Main.sendMessageToBungee(event.getExecuter(), "c:bungeecord","event",event.getEventType().toString());
+    }
+
+    public static void sendAllPlayersSound(Sound sound) {
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            p.playSound(p.getLocation(),sound, 1,1);
+        }
     }
 
 
