@@ -137,6 +137,49 @@ public class TicketCommandExecutor implements CommandExecutor {
             return true;
         }
 
+        if(args[0].equalsIgnoreCase("add")) {
+            if(args.length != 3) {
+                s.sendMessage("§cUse /ticket <add> <player> <amount>");
+                return false;
+            }
+
+            Player target = Bukkit.getPlayer(args[1]);
+
+            if(target == null) {
+                s.sendMessage("§cDer Spieler ist nicht online.");
+                return false;
+            }
+
+            int tickets;
+
+            try {
+                tickets = EventDAO.getInstance().getTickedAmount(target.getUniqueId());
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                s.sendMessage("§cInternal Error. Please contact an admin!");
+                return false;
+            }
+
+            int amount;
+
+            try {
+                amount = Integer.parseInt(args[2]);
+            } catch (Exception exception) {
+                s.sendMessage("§cNutzte eine valide Zahl als amount!");
+                return false;
+            }
+
+            try {
+                EventDAO.getInstance().setTickedAmount(target.getUniqueId(),tickets + amount);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                return false;
+            }
+
+            s.sendMessage("§aDie Tickets von " + target.getName() + " wurde auf " + (tickets + amount) + " gestzt.");
+            return true;
+        }
+
 
 
         return false;
