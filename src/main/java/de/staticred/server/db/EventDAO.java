@@ -47,16 +47,18 @@ public class EventDAO {
 
     public void setLastOnline(UUID player) throws SQLException {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
-        con.openConnection();
 
         if(isPlayerInDatabse(player)) {
-            con.executeUpdate("UPDATE eventstime SET lastSeend = ? WHERE uuid = ?",System.currentTimeMillis(), player.toString());
+            con.openConnection();
+            con.executeUpdate("UPDATE eventstime SET lastSeen = ? WHERE uuid = ?",System.currentTimeMillis(), player.toString());
+            con.closeConnection();
         }else{
+            con.openConnection();
             con.executeUpdate("INSERT INTO eventstime(uuid, lastSeen) VALUES(?,?)", player.toString(),System.currentTimeMillis());
+            con.closeConnection();
         }
 
         con.closeConnection();
-
     }
 
     public boolean isPlayerInDatabse(UUID player) throws SQLException {

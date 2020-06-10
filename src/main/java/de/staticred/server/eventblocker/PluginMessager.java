@@ -25,18 +25,23 @@ public class PluginMessager implements PluginMessageListener {
 
         String subchannel = in.readUTF();
 
+        if(Main.currentEvent != null) return;
+
         if(subchannel.equalsIgnoreCase("event")) {
             EventType eventType = EventType.valueOf(in.readUTF());
+            String server = in.readUTF();
+            String player = in.readUTF();
+
+            if(server.equalsIgnoreCase("cbrealistic")) return;
 
             if(eventType == EventType.DOUBLE_XP) {
                 de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.DOUBLE_XP);
-                EventManager.sendMessageToBungee(event);
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 Bukkit.broadcastMessage("§e§lEin Event wurde aktiviert!");
                 Bukkit.broadcastMessage("§e§lEvent: " + event.getEventType().toString());
-                Bukkit.broadcastMessage("§a§lVon: " + event.getExecuter().toString());
+                Bukkit.broadcastMessage("§a§lVon: " + player);
                 Bukkit.broadcastMessage("§e§lZeit: 15m");
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 EventManager.startEvent(15);
                 Main.currentEvent = event;
                 return;
@@ -44,13 +49,12 @@ public class PluginMessager implements PluginMessageListener {
 
             if(eventType == EventType.FAST_DESTROY) {
                 de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.FAST_DESTROY);
-                EventManager.sendMessageToBungee(event);
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 Bukkit.broadcastMessage("§e§lEin Event wurde aktiviert!");
                 Bukkit.broadcastMessage("§e§lEvent: " + event.getEventType().toString());
-                Bukkit.broadcastMessage("§a§lVon: " + event.getExecuter().toString());
+                Bukkit.broadcastMessage("§a§lVon: " + player);
                 Bukkit.broadcastMessage("§e§lZeit: 15m");
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 EventManager.startEvent(15);
                 for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                     if(onlinePlayer.hasPermission("perk.fastdestroy")) {
@@ -65,13 +69,12 @@ public class PluginMessager implements PluginMessageListener {
 
             if(eventType == EventType.MOB_DROPRATE) {
                 de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.MOB_DROPRATE);
-                EventManager.sendMessageToBungee(event);
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 Bukkit.broadcastMessage("§e§lEin Event wurde aktiviert!");
                 Bukkit.broadcastMessage("§e§lEvent: " + event.getEventType().toString());
-                Bukkit.broadcastMessage("§a§lVon: " + event.getExecuter().toString());
+                Bukkit.broadcastMessage("§a§lVon: " + player);
                 Bukkit.broadcastMessage("§e§lZeit: 5m");
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 EventManager.startEvent(5);
                 Main.currentEvent = event;
                 return;
@@ -79,31 +82,29 @@ public class PluginMessager implements PluginMessageListener {
 
             if(eventType == EventType.FLY_EVENT) {
                 de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.FLY_EVENT);
-                EventManager.sendMessageToBungee(event);
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 Bukkit.broadcastMessage("§e§lEin Event wurde aktiviert!");
                 Bukkit.broadcastMessage("§e§lEvent: " + event.getEventType().toString());
-                Bukkit.broadcastMessage("§a§lVon: " + event.getExecuter().toString());
+                Bukkit.broadcastMessage("§a§lVon: " + player);
                 Bukkit.broadcastMessage("§e§lZeit: 15m");
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 EventManager.startEvent(15);
                 for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    onlinePlayer.setFlying(true);
                     onlinePlayer.setAllowFlight(true);
+                    onlinePlayer.setFlying(true);
                 }
                 Main.currentEvent = event;
                 return;
             }
 
             if(eventType == EventType.HALF_DAMAGE_EVENT) {
-                de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.FLY_EVENT);
-                EventManager.sendMessageToBungee(event);
-                Bukkit.broadcastMessage("&8-----------------");
+                de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.HALF_DAMAGE_EVENT);
+                Bukkit.broadcastMessage("§8-----------------");
                 Bukkit.broadcastMessage("§e§lEin Event wurde aktiviert!");
                 Bukkit.broadcastMessage("§e§lEvent: " + event.getEventType().toString());
-                Bukkit.broadcastMessage("§a§lVon: " + event.getExecuter().toString());
+                Bukkit.broadcastMessage("§a§lVon: " + player);
                 Bukkit.broadcastMessage("§e§lZeit: 5m");
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 EventManager.startEvent(5);
                 Main.currentEvent = event;
                 return;
@@ -112,13 +113,12 @@ public class PluginMessager implements PluginMessageListener {
 
             if(eventType == EventType.SHOP_SALE) {
                 de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.SHOP_SALE);
-                EventManager.sendMessageToBungee(event);
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 Bukkit.broadcastMessage("§e§lEin Event wurde aktiviert!");
                 Bukkit.broadcastMessage("§e§lEvent: " + event.getEventType().toString());
-                Bukkit.broadcastMessage("§a§lVon: " + event.getExecuter().toString());
+                Bukkit.broadcastMessage("§a§lVon: " + player);
                 Bukkit.broadcastMessage("§e§lZeit: 10m");
-                Bukkit.broadcastMessage("&8-----------------");
+                Bukkit.broadcastMessage("§8-----------------");
                 EventManager.startEvent(10);
                 Main.shopMultiplier = 0.9;
                 Main.currentEvent = event;

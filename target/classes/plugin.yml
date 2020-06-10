@@ -7,7 +7,7 @@ api-version: 1.15
 commands:
   perks:
     description: opens the perk inventory
-  vote:
+  zvote:
     description:
   v:
     description:
@@ -24,4 +24,10 @@ commands:
   spec:
     description:
   event:
+    description:
+  tickets:
+    description:
+  spawnvillager:
+    description:
+  arena:
     description:

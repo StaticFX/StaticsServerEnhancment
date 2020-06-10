@@ -512,7 +512,7 @@ public class Shop implements Listener {
                     p.sendMessage(ChatColor.RED + "Du hast nicht genug Geld um dieses Item zu kaufen");
                     return;
                 }
-                Main.getInstance().getServer().dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getName() + " essentials.enderchest");
+                Main.getInstance().getServer().dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getName() + " permission set essentials.enderchest");
                 p.sendMessage("§cDu hast dieses Item erfolgreich gekauft.");
                 eco.withdrawPlayer(p, price);
                 return;
@@ -530,7 +530,7 @@ public class Shop implements Listener {
                     p.sendMessage(ChatColor.RED + "Du hast nicht genug Geld um dieses Item zu kaufen");
                     return;
                 }
-                Main.getInstance().getServer().dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getName() + " essentials.invsee");
+                Main.getInstance().getServer().dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getName() + " permission set essentials.invsee");
                 p.sendMessage("§cDu hast dieses Item erfolgreich gekauft.");
                 eco.withdrawPlayer(p, price);
                 return;
@@ -548,7 +548,7 @@ public class Shop implements Listener {
                     p.sendMessage(ChatColor.RED + "Du hast nicht genug Geld um dieses Item zu kaufen");
                     return;
                 }
-                Main.getInstance().getServer().dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getName() + " essentials.workbench");
+                Main.getInstance().getServer().dispatchCommand(Bukkit.getConsoleSender(), "lp user " + p.getName() + " permission set essentials.workbench");
                 p.sendMessage("§cDu hast dieses Item erfolgreich gekauft.");
                 eco.withdrawPlayer(p, price);
                 return;

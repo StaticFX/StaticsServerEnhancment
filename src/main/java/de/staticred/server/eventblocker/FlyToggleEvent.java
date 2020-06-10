@@ -15,13 +15,16 @@ public class FlyToggleEvent implements Listener {
     public void flyToggleEvent(PlayerToggleFlightEvent e) {
         Player p = e.getPlayer();
 
-        if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.FLY_EVENT) return;
+        if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.FLY_EVENT) {
+            p.setAllowFlight(true);
+            return;
+        }
 
         Location loc = new Location(p.getLocation().getWorld().getName(), p.getLocation().getBlockX(), p.getLocation().getBlockY(),p.getLocation().getBlockZ());
         Plot currentPlot = Plot.getPlot(loc);
 
         if(!p.hasPermission("perk.flyanywhere")) {
-            if (currentPlot == null || !currentPlot.getOwners().contains(p.getUniqueId())) {
+            if (currentPlot == null || !currentPlot.getOwners().contains(p.getUniqueId()) && !currentPlot.getTrusted().contains(p.getUniqueId())) {
                 e.setCancelled(true);
                 p.setFlying(false);
             }

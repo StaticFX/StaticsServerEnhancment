@@ -6,6 +6,7 @@ import de.staticred.server.objects.Event;
 import de.staticred.server.objects.EventType;
 import de.staticred.server.util.EventManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -40,7 +41,7 @@ public class EventInventoryListener implements Listener {
             }
 
             try {
-                if(EventDAO.getInstance().getTickedAmount(p.getUniqueId()) == 0) {
+                if(EventDAO.getInstance().getTickedAmount(p.getUniqueId()) < 1) {
                     p.sendMessage("§aTicktes bekommst du unter: §6ziemlich.tebex.io");
                     return;
                 }
@@ -60,6 +61,8 @@ public class EventInventoryListener implements Listener {
                 Bukkit.broadcastMessage("§8-----------------");
                 Bukkit.broadcastMessage("\n");
                 EventManager.startEvent(15);
+                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1,1);
+                p.closeInventory();
                 Main.currentEvent = event;
                 try {
                     EventDAO.getInstance().setTickedAmount(p.getUniqueId(),EventDAO.getInstance().getTickedAmount(p.getUniqueId()) - 1);
@@ -81,6 +84,8 @@ public class EventInventoryListener implements Listener {
                 Bukkit.broadcastMessage("§8-----------------");
                 EventManager.startEvent(15);
                 Bukkit.broadcastMessage("\n");
+                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1,1);
+                p.closeInventory();
                 for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                     if(onlinePlayer.hasPermission("perk.fastdestroy")) {
                         onlinePlayer.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING,99999,5,false,false));
@@ -98,18 +103,7 @@ public class EventInventoryListener implements Listener {
             }
 
             if(itemName.equals("§b§lEhöhte Mobdroprate")) {
-                de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.MOB_DROPRATE);
-                EventManager.sendMessageToBungee(event);
-                Bukkit.broadcastMessage("\n");
-                Bukkit.broadcastMessage("§8-----------------");
-                Bukkit.broadcastMessage("§e§lEin Event wurde aktiviert!");
-                Bukkit.broadcastMessage("§e§lEvent: " + event.getEventType().toString());
-                Bukkit.broadcastMessage("§a§lVon: " + event.getExecuter().getName());
-                Bukkit.broadcastMessage("§e§lZeit: 5m");
-                Bukkit.broadcastMessage("§8-----------------");
-                EventManager.startEvent(5);
-                Bukkit.broadcastMessage("\n");
-                Main.currentEvent = event;
+                p.sendMessage("§cComing soon.");
                 return;
             }
 
@@ -124,10 +118,12 @@ public class EventInventoryListener implements Listener {
                 Bukkit.broadcastMessage("§e§lZeit: 15m");
                 Bukkit.broadcastMessage("§8-----------------");
                 Bukkit.broadcastMessage("\n");
+                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1,1);
+                p.closeInventory();
                 EventManager.startEvent(15);
                 for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    onlinePlayer.setFlying(true);
                     onlinePlayer.setAllowFlight(true);
+                    onlinePlayer.setFlying(true);
                     Main.currentEvent = event;
                 }
                 try {
@@ -140,7 +136,7 @@ public class EventInventoryListener implements Listener {
             }
 
             if(itemName.equals("§b§lHalber Schaden")) {
-                de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.FLY_EVENT);
+                de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.HALF_DAMAGE_EVENT);
                 EventManager.sendMessageToBungee(event);
                 Bukkit.broadcastMessage("\n");
                 Bukkit.broadcastMessage("§8-----------------");
@@ -150,6 +146,8 @@ public class EventInventoryListener implements Listener {
                 Bukkit.broadcastMessage("§e§lZeit: 5m");
                 Bukkit.broadcastMessage("§8-----------------");
                 Bukkit.broadcastMessage("\n");
+                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1,1);
+                p.closeInventory();
                 EventManager.startEvent(5);
                 Main.currentEvent = event;
                 try {
@@ -161,7 +159,7 @@ public class EventInventoryListener implements Listener {
             }
 
             if(itemName.equals("§b§lShop Sale")) {
-                de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.FLY_EVENT);
+                de.staticred.server.objects.Event event = new Event(p,System.currentTimeMillis(), EventType.SHOP_SALE);
                 EventManager.sendMessageToBungee(event);
                 Bukkit.broadcastMessage("\n");
                 Bukkit.broadcastMessage("§8-----------------");
@@ -171,6 +169,8 @@ public class EventInventoryListener implements Listener {
                 Bukkit.broadcastMessage("§e§lZeit: 10m");
                 Bukkit.broadcastMessage("§8-----------------");
                 Bukkit.broadcastMessage("\n");
+                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1,1);
+                p.closeInventory();
                 EventManager.startEvent(10);
                 Main.shopMultiplier = 0.9;
                 Main.currentEvent = event;

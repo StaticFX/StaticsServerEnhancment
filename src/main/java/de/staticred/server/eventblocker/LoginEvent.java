@@ -6,6 +6,7 @@ import de.staticred.server.db.PerkDAO;
 import de.staticred.server.objects.EventType;
 import de.staticred.server.objects.Perks;
 import de.staticred.server.scoreboard.Scoreboard;
+import de.staticred.server.util.ArenaFileManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,20 +26,38 @@ public class LoginEvent implements Listener {
     public void onLogin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         if(!Main.enabledPerks.containsKey(p)) Main.enabledPerks.put(p,new ArrayList<>());
+        String group = Main.api.getUserManager().getUser(p.getUniqueId()).getPrimaryGroup();
+
+
+
+        if(Main.leftInGame.contains(p.getUniqueId().toString())) {
+            p.performCommand("spawn");
+            Main.leftInGame.remove(p.getUniqueId().toString());
+        }
 
         try {
-            if(!EventDAO.getInstance().isInDatabase(p.getUniqueId()))
+            if(!EventDAO.getInstance().isInDatabase(p.getUniqueId())) {
                 EventDAO.getInstance().addPlayer(p.getUniqueId(), 0);
+                if(p.hasPermission("daily.ticket")) {
+                    try {
+                        EventDAO.getInstance().setTickedAmount(p.getUniqueId(),EventDAO.getInstance().getTickedAmount(p.getUniqueId()) + 1);
+                        p.sendMessage("§cDir wurde Automatisch dein tägliches Event-Ticket zugewiesen.");
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                }
+            }
+
             Scoreboard.generateScoreboard(p);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
 
-        String group = Main.api.getUserManager().getUser(p.getUniqueId()).getPrimaryGroup();
+        p.setFlying(false);
 
-        if(group.equalsIgnoreCase("ziemlich")) {
+        if(p.hasPermission("daily.ticket")) {
             try {
-                if(isNewDay(p.getUniqueId())) {
+                if(!isNewDay(p.getUniqueId())) {
                     EventDAO.getInstance().setTickedAmount(p.getUniqueId(),EventDAO.getInstance().getTickedAmount(p.getUniqueId()) + 1);
                     p.sendMessage("§cDir wurde Automatisch dein tägliches Event-Ticket zugewiesen.");
                 }
@@ -52,13 +71,17 @@ public class LoginEvent implements Listener {
         if(!Main.updater) {
             Scoreboard.startUpdater();
             Main.updater = true;
+            ArenaFileManager.getInstance().loadFile();
         }
 
-
-
         if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.FLY_EVENT) {
-            p.setFlying(true);
             p.setAllowFlight(true);
+            p.setFlying(true);
+        }else{
+            if(!p.hasPermission("perk.fly")) {
+                p.setFlying(false);
+                p.setAllowFlight(false);
+            }
         }
         if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.FAST_DESTROY) {
             if(p.hasPermission("perk.fastdestroy")) {
@@ -66,57 +89,58 @@ public class LoginEvent implements Listener {
             }else{
                 p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING,99999,2,true,false));
             }
+        }else{
+            for(PotionEffect effect : p.getActivePotionEffects()) {
+                if(effect.getType() == PotionEffectType.FAST_DIGGING) {
+                    p.removePotionEffect(effect.getType());
+                }
+            }
         }
 
+        try {
 
-
-            try {
-                 if(!EventDAO.getInstance().isInDatabase(p.getUniqueId())) {
-                     EventDAO.getInstance().addPlayer(p.getUniqueId(),0);
-                 }
-
-                if(p.hasPermission("perk.fly")) {
-                    PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.FLY_PERK);
-                }else{
-                    PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.FLY_PERK);
-                }
-                if(p.hasPermission("perk.keepinventory"))  {
-                    PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.KEEP_INVENTORY_PERK);
-                }else{
-                    PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.KEEP_INVENTORY_PERK);
-                }
-                if(p.hasPermission("perk.keepxp")) {
-                    PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.KEEP_XP_PERK);
-                }else{
-                    PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.KEEP_XP_PERK);
-                }
-                if(p.hasPermission("perk.anti_hunger")) {
-                    PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.ANTI_HUNGER);
-                }else{
-                    PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.ANTI_HUNGER);
-                }
-                if(p.hasPermission("perk.speed")) {
-                    PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.SPEED_PERK);
-                }else{
-                    PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.SPEED_PERK);
-                }
-                if(p.hasPermission("perk.fastdestroy")) {
-                    PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.FAST_DESTROY_PERK);
-                }else{
-                    PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.FAST_DESTROY_PERK);
-                }
-            if(p.hasPermission("perk.doublexp")) {
-                PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.DOUBLE_XP_PERK);
+            if(p.hasPermission("perk.fly")) {
+                PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.FLY_PERK);
             }else{
-                PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.DOUBLE_XP_PERK);
+                PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.FLY_PERK);
             }
-            if(p.hasPermission("perk.nightvision")) {
-                PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.NIGHT_VISION_PERK);
+            if(p.hasPermission("perk.keepinventory"))  {
+                PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.KEEP_INVENTORY_PERK);
             }else{
-                PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.NIGHT_VISION_PERK);
+                PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.KEEP_INVENTORY_PERK);
             }
-            } catch (SQLException ex) {
-                ex.printStackTrace(); }
+            if(p.hasPermission("perk.keepxp")) {
+                PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.KEEP_XP_PERK);
+            }else{
+                PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.KEEP_XP_PERK);
+            }
+            if(p.hasPermission("perk.anti_hunger")) {
+                PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.ANTI_HUNGER);
+            }else{
+                PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.ANTI_HUNGER);
+            }
+            if(p.hasPermission("perk.speed")) {
+                PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.SPEED_PERK);
+            }else{
+                PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.SPEED_PERK);
+            }
+            if(p.hasPermission("perk.fastdestroy")) {
+                PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.FAST_DESTROY_PERK);
+            }else{
+                PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.FAST_DESTROY_PERK);
+            }
+             if(p.hasPermission("perk.doublexp")) {
+                 PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.DOUBLE_XP_PERK);
+             }else{
+                 PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.DOUBLE_XP_PERK);
+             }
+             if(p.hasPermission("perk.nightvision")) {
+                 PerkDAO.getInstance().addPerk(p.getUniqueId(), Perks.NIGHT_VISION_PERK);
+            }else{
+                 PerkDAO.getInstance().removePerk(p.getUniqueId(), Perks.NIGHT_VISION_PERK);
+             }
+        } catch (SQLException ex) {
+            ex.printStackTrace(); }
 
 
 

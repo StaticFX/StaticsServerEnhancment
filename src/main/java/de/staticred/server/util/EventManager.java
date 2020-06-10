@@ -50,7 +50,7 @@ public class EventManager {
     }
 
     public static void startEvent(int minutes) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(),() -> {
+        Bukkit.getScheduler().scheduleAsyncDelayedTask(Main.getInstance(),() -> {
             Bukkit.broadcastMessage("§8------------");
             Bukkit.broadcastMessage("§c§lDas aktuelle Event endet in §420 §c§lsekunden.");
             sendAllPlayersSound(Sound.BLOCK_NOTE_BLOCK_PLING);
@@ -103,7 +103,7 @@ public class EventManager {
     }
 
     public static void sendMessageToBungee(Event event) {
-        Main.sendMessageToBungee(event.getExecuter(), "c:bungeecord","event",event.getEventType().toString());
+        Main.sendMessageToBungee(event.getExecuter(), "c:bungeecord","event",event.getEventType().toString(), "cbrealistic",event.getExecuter().getName());
     }
 
     public static void sendAllPlayersSound(Sound sound) {

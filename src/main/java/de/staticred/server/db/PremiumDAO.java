@@ -3,6 +3,7 @@ package de.staticred.server.db;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.UUID;
 
 public class PremiumDAO {
@@ -15,7 +16,7 @@ public class PremiumDAO {
     public void addPremiumDate(UUID uuid) throws SQLException {
         DataBaseConnection con = DataBaseConnection.INSTANCE;
         con.openConnection();
-        con.executeUpdate("INSERT INTO premium(UUID, timeStamp) VALUES(?,?)", uuid.toString(), System.currentTimeMillis());
+        con.executeUpdate("INSERT INTO premium(UUID, timeStamp) VALUES(?,?)", uuid.toString(), System.currentTimeMillis() + Duration.ofDays(7).toMillis());
         con.closeConnection();
     }
 

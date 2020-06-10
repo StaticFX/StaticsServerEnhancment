@@ -12,8 +12,10 @@ public class DamageEvent implements Listener {
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if(event.getEntity() instanceof Player) {
-            if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.HALF_DAMAGE_EVENT)
+            if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.HALF_DAMAGE_EVENT) {
                 event.setDamage(event.getDamage() / 2);
+            }
+
         }
     }
 

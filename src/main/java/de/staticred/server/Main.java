@@ -3,6 +3,7 @@ package de.staticred.server;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.staticred.server.commands.*;
+import de.staticred.server.commands.arenacmd.ArenaCommandExecutor;
 import de.staticred.server.db.DataBaseConnection;
 import de.staticred.server.db.EventDAO;
 import de.staticred.server.db.PerkDAO;
@@ -12,6 +13,9 @@ import de.staticred.server.objects.Event;
 import de.staticred.server.objects.Perks;
 import de.staticred.server.objects.Shop;
 import de.staticred.server.objects.ShopItem;
+import de.staticred.server.scoreboard.Scoreboard;
+import de.staticred.server.util.ArenaFileManager;
+import de.staticred.server.util.ArenaSignFileManager;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -22,11 +26,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scoreboard.Score;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class Main extends JavaPlugin {
 
@@ -50,12 +56,11 @@ public class Main extends JavaPlugin {
     public static List<String> resultMessage = new ArrayList<>();
     public static int task;
     public static List<Player> cooldown = new ArrayList<>();
-    public static List<Integer> tasks;
     public static HashMap<Player, Integer> playerTaskHashMap = new HashMap<>();
     public static int onlineplayer;
-    public static int onlineplayer2;
     public static Event currentEvent = null;
     public static double shopMultiplier = 1;
+    public static ArrayList<String> leftInGame = new ArrayList<>();
 
 
     @Override
@@ -108,6 +113,8 @@ public class Main extends JavaPlugin {
         loadTableVote();
         setupEconomy();
 
+        ArenaSignFileManager.getInstance().loadFile();
+
         getServer().getPluginManager().registerEvents(new DeathEvent(),this);
         getServer().getPluginManager().registerEvents(new FlyToggleEvent(),this);
         getServer().getPluginManager().registerEvents(new HungerEvent(),this);
@@ -122,13 +129,21 @@ public class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerPortalEvent(),this);
         getServer().getPluginManager().registerEvents(new EventInventoryListener(),this);
         getServer().getPluginManager().registerEvents(new DamageEvent(),this);
+        getServer().getPluginManager().registerEvents(new EntityDeathEvent(),this);
+        getServer().getPluginManager().registerEvents(new VillagerClickedEvent(),this);
+        getServer().getPluginManager().registerEvents(new PlotInventoryListener(),this);
+        getServer().getPluginManager().registerEvents(new SignChangeEvent(),this);
+        getServer().getPluginManager().registerEvents(new OnSignClick(),this);
+        getServer().getPluginManager().registerEvents(new PlayerBlockDestroyEvent(),this);
+        getServer().getPluginManager().registerEvents(new AnvilEvent(),this);
+        getServer().getPluginManager().registerEvents(new PlayerSwitchWoirldEvent(),this);
 
         getServer().getMessenger().registerIncomingPluginChannel( this, "c:bungeecord", new PluginMessager()); // we register the incoming channel
         getServer().getMessenger().registerOutgoingPluginChannel( this, "c:bungeecord");
 
         getCommand("head").setExecutor(new HeadCommandExecutor());
         getCommand("premium").setExecutor(new PremiumCommandExecutor());
-        getCommand("vote").setExecutor(new VoteCommandExecutor());
+        getCommand("zvote").setExecutor(new VoteCommandExecutor());
         getCommand("v").setExecutor(new VCommandExecutor());
         getCommand("perks").setExecutor(new PerksCommandExecutor());
         getCommand("debug").setExecutor(new DebugCommandExecutor());
@@ -137,6 +152,8 @@ public class Main extends JavaPlugin {
         getCommand("spec").setExecutor(new SpecCommandExecutor());
         getCommand("event").setExecutor(new EventCommandExecutor());
         getCommand("tickets").setExecutor(new TicketCommandExecutor());
+        getCommand("spawnvillager").setExecutor(new SpawnUpgradeVillagerCommandExecutor());
+        getCommand("arena").setExecutor(new ArenaCommandExecutor());
 
         try {
             EventDAO.getInstance().loadTable();
@@ -151,6 +168,12 @@ public class Main extends JavaPlugin {
 
         loadPerms();
         for(Player p : Bukkit.getOnlinePlayers()) {
+
+            if(!updater) {
+                Scoreboard.startUpdater();
+                updater = true;
+                ArenaFileManager.getInstance().loadFile();
+            }
 
             for(PotionEffect effect : p.getActivePotionEffects()) {
                 p.removePotionEffect(effect.getType());
@@ -169,6 +192,9 @@ public class Main extends JavaPlugin {
                 e.printStackTrace();
             }
         }
+
+
+
     }
 
 
@@ -189,6 +215,9 @@ public class Main extends JavaPlugin {
             if(p.hasPermission("perk.fly")) {
                 if(activation) p.setAllowFlight(true);
                 if(!activation) p.setAllowFlight(false);
+            }else{
+                p.setAllowFlight(false);
+                p.setFlying(false);
             }
         }
         if(perk == Perks.FAST_DESTROY_PERK) {

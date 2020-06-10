@@ -46,7 +46,7 @@ public class PremiumCommandExecutor implements CommandExecutor {
 
         try {
             if(PremiumDAO.getInstance().gavePremium(p.getUniqueId())) {
-                if(PremiumDAO.getInstance().getTimeStamp(p.getUniqueId()) < System.currentTimeMillis() + Duration.ofDays(7).toMillis()) {
+                if(PremiumDAO.getInstance().getTimeStamp(p.getUniqueId()) > System.currentTimeMillis()) {
                     p.sendMessage("§cBitte warte eine Woche bevor du einem Spieler Premium gibts.");
                     return false;
                 }else{

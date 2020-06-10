@@ -38,22 +38,12 @@ public class ShowBorderCommandExecutor implements CommandExecutor {
             return false;
         }
 
-        if(!currentPlot.hasOwner()) {
-            p.sendMessage("§cDieses Plot gehört dir nicht!");
-            return false;
-        }
-
-        if(!currentPlot.getOwner().toString().equals(p.getUniqueId().toString()) && !currentPlot.getTrusted().contains(p.getUniqueId())) {
-            p.sendMessage("§cDieses Plot gehört dir nicht!");
-            return false;
-        }
-
         List<Location> locations = currentPlot.getAllCorners();
 
         Location cornerXY1 = locations.get(0);
         Location cornerXY2 = locations.get(2);
 
-        p.sendMessage("§aDir werden nur die Ränder deines Plots angezeigt.");
+        p.sendMessage("§aDir werden nur die Ränder des Plots angezeigt.");
 
         if(Main.playerTaskHashMap.containsKey(p)) Main.playerTaskHashMap.remove(p);
 

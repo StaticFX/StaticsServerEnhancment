@@ -1,8 +1,12 @@
 package de.staticred.server.eventblocker;
 
+import de.staticred.server.Main;
 import de.staticred.server.db.EventDAO;
 import de.staticred.server.db.PerkDAO;
+import de.staticred.server.objects.Arena;
 import de.staticred.server.objects.Perks;
+import de.staticred.server.util.ArenaManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +23,55 @@ public class PlayerQuitEvent implements Listener {
         Player p = e.getPlayer();
 
         e.setQuitMessage("");
+
+        if(ArenaManager.isPlayerQueueing(p)) ArenaManager.stopQueuing(p);
+
+        if(ArenaManager.fightingPlayers.contains(p) || ArenaManager.waitingPlayers.contains(p)) {
+
+            Main.leftInGame.add(p.getUniqueId().toString());
+
+            Player killer;
+
+            if(ArenaManager.getArena(p).getPlayer1() == p) {
+                killer = ArenaManager.getArena(p).getPlayer2();
+
+            } else {
+                killer = ArenaManager.getArena(p).getPlayer1();
+            }
+
+            Arena arena = ArenaManager.getArena(killer);
+
+            try {
+                for(Perks perk : PerkDAO.getInstance().getPerks(killer.getUniqueId())) {
+                    Main.getInstance().executePerkChange(killer,perk,true);
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+
+            killer.sendMessage("§cDer gegner hat das Spiel verlassen.");
+            killer.sendTitle("§a§lDu hast gewonnen!","");
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
+                killer.sendMessage("§aDie Arena wird zurückgesetzt in: §e5");
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
+                    killer.sendMessage("§aDie Arena wird zurückgesetzt in: §e4");
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
+                        killer.sendMessage("§aDie Arena wird zurückgesetzt in: §e3");
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
+                            killer.sendMessage("§aDie Arena wird zurückgesetzt in: §e2");
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
+                                killer.sendMessage("§aDie Arena wird zurückgesetzt in: §e1");
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
+                                    killer.performCommand("spawn");
+                                    ArenaManager.fightFinished(arena);
+                                    ArenaManager.fightingPlayers.remove(killer);
+                                }, 20);
+                            }, 20);
+                        }, 20);
+                    }, 20);
+                }, 20);
+            }, 20);
+        }
 
         try {
             for(Perks perk : PerkDAO.getInstance().getPerks(p.getUniqueId())) {

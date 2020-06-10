@@ -72,7 +72,7 @@ public class VoteCommandExecutor implements CommandExecutor {
 
             try {
                 if(VoteDAO.getInstance().hasVote(p.getUniqueId()) && !p.hasPermission("sts.infinityVote")) {
-                    if(VoteDAO.getInstance().getTimeStamp(p.getUniqueId(),true) > System.currentTimeMillis() + Duration.ofDays(1).toMillis()) {
+                    if(VoteDAO.getInstance().getTimeStamp(p.getUniqueId(),true) > VoteDAO.getInstance().getTimeStamp(p.getUniqueId(),true) + Duration.ofDays(1).toMillis()) {
                         VoteDAO.getInstance().removeVote(p.getUniqueId());
                         VoteDAO.getInstance().addVote(p.getUniqueId(), System.currentTimeMillis(),true);
                         Main.vote = true;
@@ -134,7 +134,7 @@ public class VoteCommandExecutor implements CommandExecutor {
 
             try {
                 if(VoteDAO.getInstance().hasVote(p.getUniqueId()) && !p.hasPermission("sts.infinityVote")) {
-                    if(VoteDAO.getInstance().getTimeStamp(p.getUniqueId(),false) > System.currentTimeMillis() + System.currentTimeMillis() + Duration.ofDays(1).toMillis()) {
+                    if(VoteDAO.getInstance().getTimeStamp(p.getUniqueId(),false) > VoteDAO.getInstance().getTimeStamp(p.getUniqueId(),false)) {
                         VoteDAO.getInstance().removeVote(p.getUniqueId());
                         VoteDAO.getInstance().addVote(p.getUniqueId(), System.currentTimeMillis(),false);
                         Main.vote = true;

@@ -1,12 +1,15 @@
 package de.staticred.server.commands;
 
 import de.staticred.server.Main;
+import de.staticred.server.db.PerkDAO;
 import de.staticred.server.objects.Perks;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.sql.SQLException;
 
 public class SpecCommandExecutor implements CommandExecutor {
 
@@ -32,10 +35,24 @@ public class SpecCommandExecutor implements CommandExecutor {
         if(p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.CREATIVE) {
             p.setGameMode(GameMode.SPECTATOR);
             p.sendMessage("§aSpec mode activated.");
-            Main.getInstance().executePerkChange(p, Perks.FLY_PERK,true);
+            try {
+                for(Perks perk : PerkDAO.getInstance().getPerks(p.getUniqueId())) {
+                    Main.getInstance().executePerkChange(p,perk,true);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }else{
             p.setGameMode(GameMode.SURVIVAL);
             p.sendMessage("§cSpec mode deactivated.");
+            try {
+                for(Perks perk : PerkDAO.getInstance().getPerks(p.getUniqueId())) {
+                    Main.getInstance().executePerkChange(p,perk,true);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
 
         return false;

@@ -72,7 +72,7 @@ public class HeadCommandExecutor implements CommandExecutor {
 
 
 
-        }else if(Main.api.getUserManager().getUser(p.getUniqueId()).getPrimaryGroup().equalsIgnoreCase("ziemlich") || p.hasPermission("sts.softteam")) {
+        }else if(Main.api.getUserManager().getUser(p.getUniqueId()).getPrimaryGroup().equalsIgnoreCase("ziemlich") || Main.api.getUserManager().getUser(p.getUniqueId()).getPrimaryGroup().equalsIgnoreCase("newziemlich") || p.hasPermission("sts.softteam")) {
             try {
                 if (HeadDAO.getInstance().gaveHead(p.getUniqueId())) {
                     if (HeadDAO.getInstance().getTimeStamp(p.getUniqueId()) < HeadDAO.getInstance().getTimeStamp(p.getUniqueId()) + Duration.ofDays(7).toMillis()) {

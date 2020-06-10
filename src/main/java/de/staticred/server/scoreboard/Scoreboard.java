@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import de.staticred.server.Main;
 import de.staticred.server.db.SlotDAO;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.luckperms.api.context.ContextManager;
 import net.luckperms.api.model.user.User;
 import net.milkbowl.vault.economy.Economy;
@@ -56,7 +57,6 @@ public class Scoreboard {
 
         //placerholder 2-4
         objective.getScore("   ").setScore(21);
-        objective.getScore("    ").setScore(20);
 
 
         //money
@@ -68,20 +68,20 @@ public class Scoreboard {
 
         //placerholder 4-6
         objective.getScore("     ").setScore(17);
-        objective.getScore("      ").setScore(16);
 
         //world
-        objective.getScore("§aServer:").setScore(15);
+        objective.getScore("§aVoteparty:").setScore(15);
 
         Team worldTeam = board.registerNewTeam("worldTeam");
-        worldTeam.setPrefix("§7»§3 " + "CBRealistic");
+        String text = "&a%VotingPlugin_VotePartyVotesCurrent%&7/&6%VotingPlugin_VotePartyVotesRequired%";
+        text = PlaceholderAPI.setPlaceholders(p,text);
+        worldTeam.setPrefix("§7»§3 " + text);
         worldTeam.addEntry("§3");
         objective.getScore("§3").setScore(14);
 
 
         //placeholder 6-8
-        objective.getScore("       ").setScore(13);
-        objective.getScore("        ").setScore(12);
+        objective.getScore("            ").setScore(13);
 
         //spielerteam
         objective.getScore("§aSpieler:").setScore(11);
@@ -94,7 +94,6 @@ public class Scoreboard {
         objective.getScore("§7").setScore(10);
 
         objective.getScore("       ").setScore(9);
-        objective.getScore("        ").setScore(8);
         objective.getScore("§e§lAktuelles Event:").setScore(8);
 
         Team evenTeam = board.registerNewTeam("eventTeam");
@@ -158,13 +157,17 @@ public class Scoreboard {
                 Team worldTeam = board.getTeam("worldTeam");
 
 
+
                 if(worldTeam == null) {
+                    String text = "&a%VotingPlugin_VotePartyVotesCurrent%&7/&6%VotingPlugin_VotePartyVotesNeeded%";
+                    text = PlaceholderAPI.setPlaceholders(p,text);
                     worldTeam = board.registerNewTeam("worldTeam");
-                    worldTeam.setPrefix("§7»§3 " + "CBRealistic");
+                    worldTeam.setPrefix("§7»§3 " + text);
                     worldTeam.addEntry("§3");
                     obj.getScore("§3").setScore(16);
-                }else{
-                    worldTeam.setPrefix("§7»§3 CBRealistic");
+                }else{              String text = "&a%VotingPlugin_VotePartyVotesCurrent%&7/&6%VotingPlugin_VotePartyVotesRequired%";
+                    text = PlaceholderAPI.setPlaceholders(p,text);
+                    worldTeam.setPrefix("§7»§3 " + text);
                 }
 
                 Team playerTeam = board.getTeam("playerTeam");
@@ -187,7 +190,7 @@ public class Scoreboard {
                 sendFarmData(p);
 
                 if(eventTeam == null) {
-                    eventTeam = board.registerNewTeam("playerTeam");
+                    eventTeam = board.registerNewTeam("eventTeam");
                     if(Main.currentEvent == null) {
                         eventTeam.setPrefix("§7»§a Kein Event");
                     }else{
@@ -195,8 +198,11 @@ public class Scoreboard {
                     }                    eventTeam.addEntry("§8");
                     obj.getScore("§8").setScore(7);
                 }else{
-                    eventTeam.setPrefix("§7»§a " + Main.currentEvent.getEventType().toString());
-                }
+                    if(Main.currentEvent == null) {
+                        eventTeam.setPrefix("§7»§a Kein Event");
+                    }else{
+                        eventTeam.setPrefix("§7»§a " + Main.currentEvent.getEventType().toString());
+                    }                     }
 
             }
         }, 0, 200);

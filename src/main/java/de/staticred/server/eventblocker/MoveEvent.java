@@ -5,6 +5,7 @@ import com.plotsquared.core.plot.Plot;
 import de.staticred.server.Main;
 import de.staticred.server.objects.EventType;
 import de.staticred.server.objects.Perks;
+import de.staticred.server.util.ArenaManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,8 +18,19 @@ public class MoveEvent implements Listener {
     public void onMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
 
-        if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.FLY_EVENT) return;
+        if(Main.currentEvent != null && Main.currentEvent.getEventType() == EventType.FLY_EVENT) {
+            p.setAllowFlight(true);
+            return;
+        }
 
+        if(ArenaManager.waitingPlayers.contains(p)) {
+            e.setCancelled(true);
+        }
+
+
+        if(!p.hasPermission("perk.fly")) {
+            p.setAllowFlight(false);
+        }
 
 
         if(!p.hasPermission("perk.flyanywhere")) {
@@ -33,7 +45,7 @@ public class MoveEvent implements Listener {
                         }
                         return;
                     }
-                    if(!currentPlot.getOwners().contains(p.getUniqueId())) {
+                    if(!currentPlot.getOwners().contains(p.getUniqueId()) && !currentPlot.getTrusted().contains(p.getUniqueId())) {
                         if(!Main.flyWarn.contains(p)) {
                             startTimer(p);
                             Main.flyWarn.add(p);
@@ -55,7 +67,7 @@ public class MoveEvent implements Listener {
                 Location loc = new Location(p.getLocation().getWorld().getName(), p.getLocation().getBlockX(), p.getLocation().getBlockY(),p.getLocation().getBlockZ());
                 Plot currentPlot = Plot.getPlot(loc);
 
-                if(currentPlot == null || !currentPlot.getOwners().contains(p.getUniqueId())) {
+                if(currentPlot == null || !currentPlot.getOwners().contains(p.getUniqueId()) && !currentPlot.getTrusted().contains(p.getUniqueId())) {
                     p.setFlying(false);
                     p.sendMessage("§c§lYour fly was disabled because you left your plot.");
                 }
