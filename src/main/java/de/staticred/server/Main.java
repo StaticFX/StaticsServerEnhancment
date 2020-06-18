@@ -2,6 +2,8 @@ package de.staticred.server;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import de.staticred.server.chestsystem.commands.ChestCommandExecutor;
+import de.staticred.server.chestsystem.db.ChestDAO;
 import de.staticred.server.commands.*;
 import de.staticred.server.commands.arenacmd.ArenaCommandExecutor;
 import de.staticred.server.db.DataBaseConnection;
@@ -113,6 +115,7 @@ public class Main extends JavaPlugin {
         loadTableVote();
         setupEconomy();
 
+
         ArenaSignFileManager.getInstance().loadFile();
 
         getServer().getPluginManager().registerEvents(new DeathEvent(),this);
@@ -154,9 +157,17 @@ public class Main extends JavaPlugin {
         getCommand("tickets").setExecutor(new TicketCommandExecutor());
         getCommand("spawnvillager").setExecutor(new SpawnUpgradeVillagerCommandExecutor());
         getCommand("arena").setExecutor(new ArenaCommandExecutor());
+        getCommand("chest").setExecutor(new ChestCommandExecutor());
+
 
         try {
             EventDAO.getInstance().loadTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ChestDAO.getInstance().loadTable();
         } catch (SQLException e) {
             e.printStackTrace();
         }

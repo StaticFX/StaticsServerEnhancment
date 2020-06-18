@@ -39,7 +39,7 @@ public class HeadCommandExecutor implements CommandExecutor {
         if(Main.api.getUserManager().getUser(p.getUniqueId()).getPrimaryGroup().equalsIgnoreCase("agent")) {
             try {
                 if(HeadDAO.getInstance().gaveHead(p.getUniqueId())) {
-                    if(HeadDAO.getInstance().getTimeStamp(p.getUniqueId()) < HeadDAO.getInstance().getTimeStamp(p.getUniqueId()) + Duration.ofDays(14).toMillis()) {
+                    if(HeadDAO.getInstance().getTimeStamp(p.getUniqueId())  + Duration.ofDays(7).toMillis() > System.currentTimeMillis()) {
                         p.sendMessage("§cBitte warte 2 wochen bis du dir einen Kopf geben kannst.");
                         return false;
                     }else{
@@ -75,7 +75,7 @@ public class HeadCommandExecutor implements CommandExecutor {
         }else if(Main.api.getUserManager().getUser(p.getUniqueId()).getPrimaryGroup().equalsIgnoreCase("ziemlich") || Main.api.getUserManager().getUser(p.getUniqueId()).getPrimaryGroup().equalsIgnoreCase("newziemlich") || p.hasPermission("sts.softteam")) {
             try {
                 if (HeadDAO.getInstance().gaveHead(p.getUniqueId())) {
-                    if (HeadDAO.getInstance().getTimeStamp(p.getUniqueId()) < HeadDAO.getInstance().getTimeStamp(p.getUniqueId()) + Duration.ofDays(7).toMillis()) {
+                    if (HeadDAO.getInstance().getTimeStamp(p.getUniqueId()) + Duration.ofDays(7).toMillis() > System.currentTimeMillis()) {
                         p.sendMessage("§cBitte warte 1 wochen bis du dir einen Kopf geben kannst.");
                         return false;
                     } else {
